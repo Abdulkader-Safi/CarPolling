@@ -1,8 +1,13 @@
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const multer = require('multer');
-const storage = multer.diskStorage({ destination: "/", filename: (req, file, cb) => { cb(null, file.originalname); }, });
+const multer = require("multer");
+const storage = multer.diskStorage({
+  destination: "/",
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
 const upload = multer({ storage });
 const User = require("../model/user");
 const Car = require("../model/car");
@@ -91,31 +96,27 @@ router.post("/addLocation", async (req, res) => {
   }
 });
 //add driver
-router.post(
-  "/addDriver",
-  upload.single("driverLicenseImage"),
-  async (req, res) => {
-    try {
-      const user = await User.findById(req.body.id);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-      const file = req.file;
-      const data = new Driver({
-        driverLicenseImage: file.path,
-        driverLicenseType: req.body.driverLicenseType,
-        driverRate: req.body.driverRate,
-        user: user._id,
-      });
-
-      const savedData = await data.save();
-
-      res.status(200).json(savedData);
-    } catch (error) {
-      res.status(400).json({ message: error.message });
+router.post("/addDriver", upload.single("driverLicenseImage"), async (req, res) => {
+  try {
+    const user = await User.findById(req.body.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
+    const file = req.file;
+    const data = new Driver({
+      driverLicenseImage: file.path,
+      driverLicenseType: req.body.driverLicenseType,
+      driverRate: req.body.driverRate,
+      user: user._id,
+    });
+
+    const savedData = await data.save();
+
+    res.status(200).json(savedData);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
-);
+});
 
 //Update a driver to be edited
 router.patch("/updateDriver/:id", async (req, res) => {
@@ -252,11 +253,10 @@ router.get("/getRides", async (req, res) => {
 router.delete("/deleteRide/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    const data = await Ride.findByIdAndDelete(id)
-    res.send(`Document with ${data.name} has been deleted...`)
-  }
-  catch(error){
-    res.status(400).json({message: error.message})
+    const data = await Ride.findByIdAndDelete(id);
+    res.send(`Document with ${data.name} has been deleted...`);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -318,9 +318,7 @@ router.get("/ridesuser/:userId", async (req, res) => {
   const userId = req.params.userId;
 
   try {
-    const rides = await Ride.find({ user: userId }).populate(
-      "FromLocation ToLocation"
-    );
+    const rides = await Ride.find({ user: userId }).populate("FromLocation ToLocation");
     res.json(rides);
   } catch (error) {
     console.error(error);
@@ -380,12 +378,8 @@ router.get("/ridePassenger/:rideId", async (req, res) => {
 
     // Combine user and passenger information
     const passengerData = users.map((user) => {
-      const passenger = passengers.find(
-        (p) => p.user.toString() === user._id.toString()
-      );
-      const passengerRide = passengerRides.find(
-        (pr) => pr.user.toString() === user._id.toString()
-      );
+      const passenger = passengers.find((p) => p.user.toString() === user._id.toString());
+      const passengerRide = passengerRides.find((pr) => pr.user.toString() === user._id.toString());
       return {
         user: {
           _id: user._id,
@@ -440,11 +434,7 @@ router.post("/addLocationRide", async (req, res) => {
     if (!ride) {
       return res.status(404).json({ message: "Ride not found" });
     }
-    const lastPosition = await LocationRide.findOne(
-      { ride: ride._id },
-      {},
-      { sort: { position: -1 }, limit: 1 }
-    );
+    const lastPosition = await LocationRide.findOne({ ride: ride._id }, {}, { sort: { position: -1 }, limit: 1 });
     const newPosition = lastPosition ? lastPosition.position + 1 : 1;
 
     const data = new LocationRide({
@@ -487,11 +477,7 @@ router.patch("/updatetRequest/:id", async (req, res) => {
     const id = req.params.id;
     const updatedData = req.body;
     const options = { new: true };
-    const result = await RideRequest.findByIdAndUpdate(
-      id,
-      updatedData,
-      options
-    );
+    const result = await RideRequest.findByIdAndUpdate(id, updatedData, options);
     res.send(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -525,9 +511,7 @@ router.get("/searchRide/:from/:to", async (req, res) => {
   const { date } = req.query;
 
   if (!from || !to || !date) {
-    return res
-      .status(400)
-      .json({ message: "Please provide 'from', 'to', and 'date' parameters" });
+    return res.status(400).json({ message: "Please provide 'from', 'to', and 'date' parameters" });
   }
 
   try {
@@ -538,9 +522,7 @@ router.get("/searchRide/:from/:to", async (req, res) => {
             { FromLocation: from },
             {
               _id: {
-                $in: await LocationRide.find({ location: from }).distinct(
-                  "ride"
-                ),
+                $in: await LocationRide.find({ location: from }).distinct("ride"),
               },
             },
           ],
@@ -619,9 +601,7 @@ router.get("/getLocations", async (req, res) => {
 //get passengerRide with passenger information
 router.get("/getPassengerRide/:id", async (req, res) => {
   try {
-    const data = await passengerRide
-      .findById(req.params.id)
-      .populate("passenger");
+    const data = await passengerRide.findById(req.params.id).populate("passenger");
     res.json(data);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -634,11 +614,7 @@ router.patch("/passengerRides/:userId", async (req, res) => {
     const { status } = req.body; // Assuming the updated status is sent in the request body
 
     // Update the passengerRide document by user ID
-    const updatedPassengerRide = await PassengerRide.findOneAndUpdate(
-      { user: userId },
-      { status },
-      { new: true }
-    );
+    const updatedPassengerRide = await PassengerRide.findOneAndUpdate({ user: userId }, { status }, { new: true });
 
     if (!updatedPassengerRide) {
       return res.status(404).json({ error: "Passenger ride not found" });
@@ -673,9 +649,7 @@ router.get("/passengerRides/:userId", async (req, res) => {
       });
 
     if (!passengerRides || passengerRides.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No passengerRides found for the specified user" });
+      return res.status(404).json({ message: "No passengerRides found for the specified user" });
     }
     res.status(200).json(passengerRides);
   } catch (error) {
@@ -703,14 +677,10 @@ router.get("/carHasDriver/:userId", async (req, res) => {
   const userId = req.params.userId;
 
   try {
-    const carHasDriver = await CarHasDriver.findOne({ user: userId }).populate(
-      "car"
-    );
+    const carHasDriver = await CarHasDriver.findOne({ user: userId }).populate("car");
 
     if (!carHasDriver) {
-      return res
-        .status(404)
-        .json({ error: "User not found or no car associated" });
+      return res.status(404).json({ error: "User not found or no car associated" });
     }
 
     const car = carHasDriver.car;
@@ -737,7 +707,7 @@ router.patch("/updatePassengerRides/:rideId/:userId", async (req, res) => {
 
     // Update the passengerRide document by ride ID
     const updatedPassengerRide = await PassengerRide.findOneAndUpdate(
-      { ride: rideId, user: userId  },
+      { ride: rideId, user: userId },
       { status },
       { new: true }
     );
