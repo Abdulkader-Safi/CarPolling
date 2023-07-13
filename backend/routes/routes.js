@@ -84,7 +84,7 @@ app.use(cors());
 //   }
 // });
 
-//add location
+/*//add location
 router.post("/addLocation", async (req, res) => {
   try {
     const data = new Locations({
@@ -98,8 +98,8 @@ router.post("/addLocation", async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
-});
-/*//add driver
+});*/
+/*add driver
 router.post("/addDriver", upload.single("driverLicenseImage"), async (req, res) => {
   try {
     const user = await User.findById(req.body.id);
@@ -186,7 +186,7 @@ router.delete("/deleteCar/:id", async (req, res) => {
   }
 });*/
 
-// Add a ride
+/*// Add a ride
 router.post("/addRide", async (req, res) => {
   try {
     const userId = req.body.driverId;
@@ -262,7 +262,7 @@ router.delete("/deleteRide/:id", async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
-});
+});*/
 
 // add a passenger
 router.post("/addPassenger", async (req, res) => {
@@ -316,7 +316,7 @@ router.patch("/updatePassenger/:id", async (req, res) => {
   }
 });
 
-//get all rides for a specific driver to be edited
+/*//get all rides for a specific driver to be edited
 // GET /rides/user/:userId
 router.get("/ridesuser/:userId", async (req, res) => {
   const userId = req.params.userId;
@@ -328,7 +328,7 @@ router.get("/ridesuser/:userId", async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
-});
+});*/
 
 /*// Get a driver with associated user information to be edited
 router.get("/getDriver/:id", async (req, res) => {
@@ -533,7 +533,7 @@ router.get("/searchRide/:from/:to", async (req, res) => {
         },
         {
           $or: [
-            { ToLocation: to },
+            { ToLocation  : to },
             {
               _id: {
                 $in: await LocationRide.find({ location: to }).distinct("ride"),
@@ -593,7 +593,7 @@ router.get("/searchRide/:from/:to", async (req, res) => {
   }
 });
 
-//Get all locations
+/*//Get all locations
 router.get("/getLocations", async (req, res) => {
   try {
     const data = await Locations.find();
@@ -601,7 +601,7 @@ router.get("/getLocations", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-});
+});*/
 //get passengerRide with passenger information
 router.get("/getPassengerRide/:id", async (req, res) => {
   try {
