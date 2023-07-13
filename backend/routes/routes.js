@@ -99,7 +99,7 @@ router.post("/addLocation", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
-//add driver
+/*//add driver
 router.post("/addDriver", upload.single("driverLicenseImage"), async (req, res) => {
   try {
     const user = await User.findById(req.body.id);
@@ -133,9 +133,9 @@ router.patch("/updateDriver/:id", async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
-});
+});*/
 
-//add a car
+/*//add a car
 router.post("/addCar", upload.single("carInsuranceImage"), async (req, res) => {
   try {
     const file = req.file;
@@ -184,7 +184,7 @@ router.delete("/deleteCar/:id", async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
-});
+});*/
 
 // Add a ride
 router.post("/addRide", async (req, res) => {
@@ -330,7 +330,7 @@ router.get("/ridesuser/:userId", async (req, res) => {
   }
 });
 
-// Get a driver with associated user information to be edited
+/*// Get a driver with associated user information to be edited
 router.get("/getDriver/:id", async (req, res) => {
   try {
     const driver = await Driver.findOne({ userId: User });
@@ -339,7 +339,7 @@ router.get("/getDriver/:id", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
-});
+});*/
 
 //ADD passenger to a ride
 router.post("/addPassengerRide", async (req, res) => {
@@ -660,7 +660,7 @@ router.get("/passengerRides/:userId", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
-// POST /carhasdrivers - Create a new carHasDriver
+/*// POST /carhasdrivers - Create a new carHasDriver
 router.post("/carhasdrivers", async (req, res) => {
   const userId = req.body.driverId;
   const carId = req.body.carId;
@@ -693,7 +693,7 @@ router.get("/carHasDriver/:userId", async (req, res) => {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
   }
-});
+});*/
 
 //update status inside passengerRide by rideId
 router.patch("/updatePassengerRides/:rideId/:userId", async (req, res) => {
