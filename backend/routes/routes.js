@@ -264,7 +264,7 @@ router.delete("/deleteRide/:id", async (req, res) => {
   }
 });*/
 
-// add a passenger
+/*// add a passenger
 router.post("/addPassenger", async (req, res) => {
   try {
     const user = await User.findById(req.body.userId);
@@ -314,7 +314,7 @@ router.patch("/updatePassenger/:id", async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
-});
+});*/
 
 /*//get all rides for a specific driver to be edited
 // GET /rides/user/:userId
@@ -341,7 +341,7 @@ router.get("/getDriver/:id", async (req, res) => {
   }
 });*/
 
-//ADD passenger to a ride
+/*//ADD passenger to a ride
 router.post("/addPassengerRide", async (req, res) => {
   try {
     const user = await User.findById(req.body.userId);
@@ -426,7 +426,7 @@ router.delete("/deletePassengerRide/:userId/:rideId", async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
-});
+});*/
 // add stops
 router.post("/addLocationRide", async (req, res) => {
   try {
