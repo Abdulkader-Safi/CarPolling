@@ -84,3 +84,92 @@ exports.deletePassengerFromRide = async (req, res) => {
         res.status(400).json({ message: error.message });
       }
 };
+//get passengerRide with passenger information
+
+exports.getPassengerRideWithPassInfo = async (req, res) => {
+  try {
+    const data = await passengerRide.findById(req.params.id).populate("passenger");
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+//update passengerRide by userId
+exports.updatePassengerRideByUserId = async (req, res) =>{
+  try {
+    const { userId } = req.params; // Extract the user ID from the request parameters
+    const { status } = req.body; // Assuming the updated status is sent in the request body
+
+    // Update the passengerRide document by user ID
+    const updatedPassengerRide = await PassengerRide.findOneAndUpdate({ user: userId }, { status }, { new: true });
+
+    if (!updatedPassengerRide) {
+      return res.status(404).json({ error: "Passenger ride not found" });
+    }
+
+    res.json(updatedPassengerRide);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update passenger ride status" });
+  }
+};
+// Get all passengerRide for a specific user with populated user, ride, and FromLocation information
+exports.getPassengerRidePopUserRideLocat = async (req, res) =>{
+  try {
+    const userId = req.params.userId;
+    const passengerRides = await PassengerRide.find({ user: userId })
+      .populate({
+        path: "user",
+        model: "user",
+      })
+      .populate({
+        path: "ride",
+        populate: [
+          {
+            path: "FromLocation",
+            model: "locations",
+          },
+          {
+            path: "ToLocation",
+            model: "locations",
+          },
+        ],
+      });
+
+    if (!passengerRides || passengerRides.length === 0) {
+      return res.status(404).json({ message: "No passengerRides found for the specified user" });
+    }
+    res.status(200).json(passengerRides);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+//update status inside passengerRide by rideId
+exports.updatePassengerRideByRideId = async (req, res) => {
+  try {
+    const { rideId, userId } = req.params;
+    const { status } = req.body;
+
+    // Validate status value
+    const validStatusValues = ["Pending", "Approved", "Rejected"];
+    if (!validStatusValues.includes(status)) {
+      return res.status(400).json({ error: "Invalid status value" });
+    }
+
+    // Add authentication and authorization checks here if required
+
+    // Update the passengerRide document by ride ID
+    const updatedPassengerRide = await PassengerRide.findOneAndUpdate(
+      { ride: rideId, user: userId },
+      { status },
+      { new: true }
+    );
+
+    if (!updatedPassengerRide) {
+      return res.status(404).json({ error: "Passenger ride not found" });
+    }
+
+    res.json(updatedPassengerRide);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update passenger ride status" });
+  }
+};

@@ -16,5 +16,6 @@ router.post("/addRide", RideController.addRide);
 router.get("/getAllRide", RideController.getAllRide);
 router.get("/getRideByID", RideController.getRideByID);
 router.get("/getRideForDriverByID", RideController.getRideForDriverByID);
+router.get("/searchRideByFromToLocat", RideController.searchRideByFromToLocat);
 router.patch("/updateRideByID", RideController.updateRideByID);
 router.delete("/deleteRideByID", RideController.deleteRideByID);

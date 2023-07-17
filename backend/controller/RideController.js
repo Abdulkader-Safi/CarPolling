@@ -85,3 +85,86 @@ exports.getRideForDriverByID = async (req, res) => {
         res.status(500).json({ message: "Server error"});
     }
 };
+
+exports.searchRideByFromToLocat = async (req, res) =>{
+  const { from, to } = req.params;
+  const { date } = req.query;
+
+  if (!from || !to || !date) {
+    return res.status(400).json({ message: "Please provide 'from', 'to', and 'date' parameters" });
+  }
+
+  try {
+    const rides = await Ride.find({
+      $and: [
+        {
+          $or: [
+            { FromLocation: from },
+            {
+              _id: {
+                $in: await LocationRide.find({ location: from }).distinct("ride"),
+              },
+            },
+          ],
+        },
+        {
+          $or: [
+            { ToLocation  : to },
+            {
+              _id: {
+                $in: await LocationRide.find({ location: to }).distinct("ride"),
+              },
+            },
+          ],
+        },
+        { rideDate: date },
+      ],
+    })
+      .populate({
+        path: "FromLocation",
+        select: "cities",
+      })
+      .populate({
+        path: "ToLocation",
+        select: "cities",
+      })
+      .populate({
+        path: "user",
+      });
+
+    // Get locationRide records for the rides
+    const rideIds = rides.map((ride) => ride._id);
+    const locationRides = await LocationRide.find({
+      ride: { $in: rideIds },
+    }).populate("location");
+
+    // Map locationRide records to their respective rides
+    const rideLocations = locationRides.reduce((acc, locationRide) => {
+      const { ride, location } = locationRide;
+      if (!acc[ride]) {
+        acc[ride] = [];
+      }
+      acc[ride].push(location);
+      return acc;
+    }, {});
+
+    // Get the driver information based on the user ID within the ride
+    const ridesWithDriverInfo = await Promise.all(
+      rides.map(async (ride) => {
+        const driver = await Driver.findOne({ user: ride.user._id });
+        return {
+          ...ride.toObject(),
+          user: {
+            ...ride.user.toObject(),
+            driver: driver.toObject(),
+          },
+          locations: rideLocations[ride._id] || [],
+        };
+      })
+    );
+
+    res.json({ rides: ridesWithDriverInfo });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

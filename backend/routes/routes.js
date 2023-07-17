@@ -427,7 +427,7 @@ router.delete("/deletePassengerRide/:userId/:rideId", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });*/
-// add stops
+/*// add stops
 router.post("/addLocationRide", async (req, res) => {
   try {
     const location = await Locations.findById(req.body.locationId);
@@ -451,8 +451,8 @@ router.post("/addLocationRide", async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
-});
-//add request for a ride
+});*/
+/*//add request for a ride
 router.post("/addRequest", async (req, res) => {
   try {
     const { FromLocation, ToLocation, passenger } = req.body;
@@ -507,9 +507,9 @@ router.delete("/deleteRequest/:id", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-});
+});*/
 
-//search a ride
+/*//search a ride
 router.get("/searchRide/:from/:to", async (req, res) => {
   const { from, to } = req.params;
   const { date } = req.query;
@@ -591,7 +591,7 @@ router.get("/searchRide/:from/:to", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-});
+});*/
 
 /*//Get all locations
 router.get("/getLocations", async (req, res) => {
@@ -602,7 +602,7 @@ router.get("/getLocations", async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });*/
-//get passengerRide with passenger information
+/*//get passengerRide with passenger information
 router.get("/getPassengerRide/:id", async (req, res) => {
   try {
     const data = await passengerRide.findById(req.params.id).populate("passenger");
@@ -659,7 +659,7 @@ router.get("/passengerRides/:userId", async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
-});
+});*/
 /*// POST /carhasdrivers - Create a new carHasDriver
 router.post("/carhasdrivers", async (req, res) => {
   const userId = req.body.driverId;
@@ -695,7 +695,7 @@ router.get("/carHasDriver/:userId", async (req, res) => {
   }
 });*/
 
-//update status inside passengerRide by rideId
+/*//update status inside passengerRide by rideId
 router.patch("/updatePassengerRides/:rideId/:userId", async (req, res) => {
   try {
     const { rideId, userId } = req.params;
@@ -725,3 +725,4 @@ router.patch("/updatePassengerRides/:rideId/:userId", async (req, res) => {
     res.status(500).json({ error: "Failed to update passenger ride status" });
   }
 });
+*/
